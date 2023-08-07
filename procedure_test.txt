@@ -1,0 +1,19 @@
+states
+q0:start
+q1
+q2
+q3:accept
+q4
+symbols
+a
+b
+c
+transitions
+q0 a__ aa_ RRS q0
+q0 ___ ___ SLS q4
+q0 b__ b_b RSR q1
+q1 b__ b_b RSR q1
+q1 c__ c__ SLL q2
+q2 cab cab RLL q2
+q2 ___ ___ SSS q3
+q4 ___ ___ SSS q3
