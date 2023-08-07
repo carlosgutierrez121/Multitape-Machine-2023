@@ -1,18 +1,52 @@
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Scanner;
 import java.util.Set;
 import javax.swing.JOptionPane;
 
 /**
- *
- * @author Carlos Gutierrez
+ * MULTITAPE TURING MACHINE SIMULATOR 
+ * 
+ * Description: This prototype is a 3-taped turing machine simulator implemented with Java Swing. In this simulator,
+ * the user can input a string and it will give a verdict whether to reject or accept the given string. For state t-
+ * ransition, it uses text file to read the contents of the transition.
+ *  
+ * Names of Contributor:
+ * 1. Carlos Kristoffer P. Gutierrez
+ * 2. Elijah Rosario
+ * 3. Luis Rafayel S. Jaime
+ * 
+ */
+
+ /* 
+ 
+    Sources:
+
+    https://gist.github.com/NikolasTzimoulis/2846116 
+
+    https://introcs.cs.princeton.edu/java/52turing/TuringMachine.java.html
+
+    https://github.com/leozulfiu/multitape-turing-machine
+
+    https://github.com/kiriloman/Multitape-Non-Deterministic-Turing-Machine
+
+    https://github.com/HattaliAhmed/Turing-Machine-Simulator
+
+    https://github.com/tychon/turing_simulator
+
+    https://github.com/marcio012/turingMachine
+
+    https://github.com/carlosdg/TuringMachineSimulator
+
+    https://github.com/EmilianoG6/TuringMachine
+
+    https://www.w3schools.com/java/java_files_read.asp
+
+    https://stackoverflow.com/questions/1006611/java-swing-timer
+
  */
 
 public class MultitapeTM {
@@ -21,7 +55,6 @@ public class MultitapeTM {
     private Set<String> states;
     private Set<String> symbols;
     private Set<Transition> transitions;
-    // private Set<char[]> inputSymbols;
     private ArrayList<Tape> tapes;
     
     public MultitapeTM(){

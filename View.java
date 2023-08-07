@@ -1,51 +1,79 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
 
 import javax.swing.Timer;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultHighlighter;
-import javax.swing.text.Highlighter;
+
+/**
+ * MULTITAPE TURING MACHINE SIMULATOR 
+ * 
+ * Description: This prototype is a 3-taped turing machine simulator implemented with Java Swing. In this simulator,
+ * the user can input a string and it will give a verdict whether to reject or accept the given string. For state t-
+ * ransition, it uses text file to read the contents of the transition.
+ *  
+ * Names of Contributors:
+ * 1. Carlos Kristoffer Gutierrez
+ * 2. Elijah Nicolo Rosario
+ * 3. Luis Rafayel Jaime
+ * 
+ */
+
+ /* 
+ 
+    Sources:
+
+    https://gist.github.com/NikolasTzimoulis/2846116 
+
+    https://introcs.cs.princeton.edu/java/52turing/TuringMachine.java.html
+
+    https://github.com/leozulfiu/multitape-turing-machine
+
+    https://github.com/kiriloman/Multitape-Non-Deterministic-Turing-Machine
+
+    https://github.com/HattaliAhmed/Turing-Machine-Simulator
+
+    https://github.com/tychon/turing_simulator
+
+    https://github.com/marcio012/turingMachine
+
+    https://github.com/carlosdg/TuringMachineSimulator
+
+    https://github.com/EmilianoG6/TuringMachine
+
+    https://www.w3schools.com/java/java_files_read.asp
+
+    https://stackoverflow.com/questions/1006611/java-swing-timer
+
+ */
 
 public class View {
 
     private static final int DELAY = 500;
     
     JFrame mainFrame;
-//    JPanel[] tape = new JPanel[5];
     private JPanel tp_cnt;
     private JPanel mainPane;
-    private JButton moveStep;
     private JPanel input_cnt;
     private JPanel alg_cnt;
     private JTextField input;
@@ -74,21 +102,6 @@ public class View {
     private boolean isReject = false;
     private MultitapeTM tm;
 
-    //pause variables
-    private boolean isRunning;
-    private int stepNum = 0;
-
-    //initialize variables for step
-    char[] temp;
-    String txt;
-    ArrayList<Character> input_pse = new ArrayList<>();
-    char[] currSymbol;
-    String currState;
-    String nextState;
-    Transition currTrans;
-    Set<Transition> stateTrans;
-    int[] currentHead;
-    int countTrans;
 
 
     
@@ -99,7 +112,6 @@ public class View {
         this.tp_cnt = new JPanel();
         this.input_cnt = new JPanel();
         this.alg_cnt = new JPanel();
-        this.moveStep = new JButton("Step");
         this.input = new JTextField(10);
         this.input.setText("aabbcc");
         this.inputLbl = new JLabel("Input");
@@ -209,62 +221,6 @@ public class View {
         this.pause.setBorder(BorderFactory.createLineBorder(Color.gray));
         this.pause.setFont(new Font("Courier New", Font.PLAIN, 30));
 
-        //add action listener for pause
-        this.pause.addActionListener((ActionEvent e) -> {
-            try {
-
-                this.pause.setEnabled(false);
-
-                //initialize tm machine
-            tm = new MultitapeTM();
-            
-            //read definition file
-            tm.readFile();
-
-            //initialize input
-            char[] temp = this.input.getText().toCharArray();
-
-            //display to the tape container
-            String txt = input.getText();
-            this.tape_1.setText(txt);
-
-            System.out.println("Input: " + Arrays.toString(temp));
-
-            ArrayList<Character> input = new ArrayList<>();
-
-            //fill input
-            for(char c : temp){
-                input.add(c);
-            }
-
-            System.out.print("ArrayList Input: ");
-            for(char c : input){
-                System.out.print(c + " ");
-            }
-
-            System.out.println("");
-
-
-            tm.getTapes().get(0).setInput(input);
-
-            System.out.print("Tape Input: ");
-
-            for(char c : tm.getTapes().get(0).getInput()){
-                System.out.print(c + " ");
-            }
-
-            System.out.println("");
-
-                //initialize the state of machine
-                String currState = tm.getStart();
-                String nextState = "";
-                Transition currTrans = new Transition();
-                pause();
-                
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-        });
         
         //add button hover
         this.pause.addMouseListener(new MouseAdapter() {
@@ -306,7 +262,7 @@ public class View {
         
         //initialize reset button
         this.rst.setLayout(null);
-        this.rst.setBounds(15, 335, 348, 47);
+        this.rst.setBounds(15, 201, 348, 47);
         this.rst.setBackground(Color.lightGray);
         this.rst.setForeground(Color.black);
         this.rst.setBorder(BorderFactory.createLineBorder(Color.gray));
@@ -495,7 +451,6 @@ public class View {
                 // //need to get the current symbol that is being read in each tape
                 char[] currSymbol = new char[3];
 
-                // System.out.println("Test Symbol: " + tm.getTapes().get(0).getInputAt(currentHead[0]));
 
                 System.out.print("Current Symbol: ");
                 // int tape2size = tm.getTapes().get(0).getInput().size();
@@ -673,240 +628,6 @@ public class View {
         stringBuilder.append("</html>");
         return stringBuilder.toString();
     }
-
-    public void pause() throws IOException {
-
-            //initialize tm machine
-            tm = new MultitapeTM();
-            
-            //read definition file
-            tm.readFile();
-
-            //initialize input
-            temp = this.input.getText().toCharArray();
-
-            //display to the tape container
-            this.txt = input.getText();
-            this.tape_1.setText(txt);
-
-            System.out.println("Input: " + Arrays.toString(temp));
-
-            ArrayList<Character> input = new ArrayList<>();
-
-            //fill input
-            for(char c : temp){
-                input.add(c);
-            }
-
-            System.out.print("ArrayList Input: ");
-            for(char c : input){
-                System.out.print(c + " ");
-            }
-
-            System.out.println("");
-
-
-            tm.getTapes().get(0).setInput(input);
-
-            System.out.print("Tape Input: ");
-
-            for(char c : tm.getTapes().get(0).getInput()){
-                System.out.print(c + " ");
-            }
-
-            System.out.println("");
-
-                //initialize the state of machine
-                this.currState = tm.getStart();
-                this.nextState = "";
-                Transition currTrans = new Transition();
-
-               
-                    if(currState.equals(tm.getAccept()) || isReject){
-
-                        if(isReject){
-                            mainPane.setBackground(Color.decode("#8B0000"));
-                        } else{
-                            System.out.println("isRejected: " + isReject);
-                            mainPane.setBackground(Color.GREEN);
-                        }
-
-                        //resets the verdict
-                        isReject = false;
-
-
-                        //increment the step
-                        stepNum++;
-
-                        System.out.println("This is Step: " + stepNum);
-                    }
-
-                    Set<Transition> stateTrans = tm.getTransitionAt(currState);
-
-                    for(Transition trans : stateTrans) {
-                        System.out.println(trans);
-                    }
-
-                    //retrieve tape head
-                    int[] currentHead = new int[3];
-
-                    System.out.print("Current Tape Heads: ");
-                    for(int i = 0; i < currentHead.length; i++){
-                        currentHead[i] = tm.getTapes().get(i).getHead();
-                        System.out.print(currentHead[i] + " ");
-                    }
-
-                    System.out.println("");
-
-                    // //need to get the current symbol that is being read in each tape
-                    char[] currSymbol = new char[3];
-
-                    // System.out.println("Test Symbol: " + tm.getTapes().get(0).getInputAt(currentHead[0]));
-
-                    System.out.print("Current Symbol: ");
-                    // int tape2size = tm.getTapes().get(0).getInput().size();
-
-                    for(int i = 0; i < currSymbol.length; i++){
-                        //if current head is out of bounds, add null to array list
-                        System.out.println("Size of tape: " + tm.getTapes().get(i).getInput().size());
-                        if(tm.getTapes().get(i).getInput().size() == currentHead[i]){
-                            tm.getTapes().get(i).getInput().add(currentHead[i], '_');
-                            System.out.println("Will add blank");
-                        } else if(currentHead[i] == -1){
-                            tm.getTapes().get(i).getInput().add(0, '_');
-                        }
-
-                        if(currentHead[i] == -1){
-                            currSymbol[i] = tm.getTapes().get(i).getInputAt(currentHead[i] + 1);
-                        } else{
-                            currSymbol[i] = tm.getTapes().get(i).getInputAt(currentHead[i]);
-                        }
-                    }
-
-                    System.out.println("");
-
-                    //iterate through the current state transition
-                    int countTrans = 0;
-                    for(Transition transition: stateTrans){
-                        if(Arrays.equals(currSymbol, transition.getRead())){
-                            currTrans = transition;
-                            countTrans++;
-                        } 
-                    }
-
-                    for(int i = 0; i < 3; i++){
-                        // tm.getTapes().get(i).getInput().set(currentHead[i], currTrans.getWrite()[i]);
-                        System.out.println("Tape " + (i+1) + ": " + tm.getTapes().get(i).getInput());
-                    }
-
-                    //determine whether it is rejected or not
-                    if(countTrans == 0){
-                        isReject = true;
-                    }
-
-                    //end the while loop if it is a dead state
-                    if(isReject){
-                        System.out.println("Rejected");
-                        // break;
-                    }
-
-                    //set next state
-                    nextState = currTrans.getNext();
-
-                    System.out.println("Current Transition at State X: " + currTrans);
-
-                    // write new symbols to the tape
-                    for(int i = 0; i < 3; i++){
-                        //convert arraylist to string
-                        StringBuilder sb = new StringBuilder();
-
-                        if(currentHead[i] == -1){
-                            tm.getTapes().get(i).getInput().set(currentHead[i] + 1, currTrans.getWrite()[i]);
-
-                            for(Character ch : tm.getTapes().get(i).getInput()){
-                                sb.append(ch);
-                            }
-
-                            switch(i+1){
-                                case 1:
-                                    tape_1.setText(setColorAt(sb.toString(), currentHead[0] + 1, "green"));
-                                    break;
-                                case 2:
-                                    tape_2.setText(setColorAt(sb.toString(), currentHead[1] + 1, "green"));
-                                    break;
-                                case 3:
-                                    tape_3.setText(setColorAt(sb.toString(), currentHead[2] + 1, "green"));
-                                    break;
-                            }
-                        } else{
-                            tm.getTapes().get(i).getInput().set(currentHead[i], currTrans.getWrite()[i]);
-
-                            for(Character ch : tm.getTapes().get(i).getInput()){
-                                sb.append(ch);
-                            }
-
-                            switch(i+1){
-                                case 1:
-                                    tape_1.setText(setColorAt(sb.toString(), currentHead[0], "green"));
-                                    break;
-                                case 2:
-                                    tape_2.setText(setColorAt(sb.toString(), currentHead[1], "green"));
-                                    break;
-                                case 3:
-                                    tape_3.setText(setColorAt(sb.toString(), currentHead[2], "green"));
-                                    break;
-                            }
-                        }
-                        
-                        System.out.println("Tape " + (i+1) + ": " + tm.getTapes().get(i).getInput());
-                    }
-
-                    for(int i = 0; i < 3; i++){
-                        System.out.println("CurrTrans Move: " + currTrans.getMove()[i]);
-                    }
-
-                    //move tape head according to the current transition
-                    for(int i = 0; i < 3; i++){
-                        switch(currTrans.getMove()[i]){
-                            //right
-                            case 'R':
-                                currentHead[i] += 1;
-                                break;
-                            case 'L':
-                                currentHead[i] -= 1;
-                                break;
-                            case 'S':
-                                break;
-
-                            default: 
-                                System.out.println("Error Finding Move");
-                                break;
-                        }       
-                    }
-
-                    System.out.println("New Current Head: " + Arrays.toString(currentHead));
-
-                    System.out.print("From " + currState + " to " + nextState);
-                    System.out.println("");
-                    //initialize new current and next state
-                    currState = nextState;
-
-                    //set tape heads
-                    for(int i = 0; i < 3; i++){
-                        tm.getTapes().get(i).setHead(currentHead[i]);
-                    }
-
-                    
-                
-
-        
-
-    }
-
-    public void step(){
-
-    }
-    
     public static void main(String[] args) throws IOException  {
         View view = new View();
         
